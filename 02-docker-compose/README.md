@@ -42,7 +42,7 @@ services:
       - MYSQL_DB=users
 ```
 
-In the documentation for the MariaDB it is documented how to volume mount SQL files for database initialization and generation of data.
+In the documentation for the MariaDB it is documented how to volume mount SQL files for database initialization and generation of data and which environment variables to set in order to configure the database.
 
 # Starting the docker-compose Setup
 Lets start the docker-compose setup:
