@@ -108,7 +108,9 @@ CONTAINER ID   IMAGE        COMMAND                  CREATED         STATUS     
 7a13fa1e44be   my/first:1   "/bin/sh -c '{ echo …"   5 seconds ago   Up 4 seconds             fervent_murdock
 ```
 
-The Docker engine defines a Docker Network. Each container gets an IP address in this network. We can't reach the endpoint of the running container from our host machine without defining a portmapping.
+The Docker engine defines a Docker Network. Each container gets an IP address in this network. 
+
+We can't reach the endpoint of the running container from our host machine without defining a portmapping.
 
 Let's run with a portmapping:
 ```
