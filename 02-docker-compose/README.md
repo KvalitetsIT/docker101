@@ -147,6 +147,112 @@ $ docker network inspect 02-docker-compose_default
 
 The hostname is the name defined in the docker-compose file services section. The hostname of the database is db and the hostname of our application is myservice.
 
+## Interacting with our containers
+No matter if you start a single container or several containers defined in a docker-compose file, you can interact with the running container.
+We would like to add a new user to the database (username: test, password: test). You can start a shell in the container by using the docker exec command.
+
+```
+$ docker exec -it 02-docker-compose_db_1 mysql -udbuser -p
+Enter password: 
+Welcome to the MariaDB monitor.  Commands end with ; or \g.
+Your MariaDB connection id is 9
+Server version: 10.3.16-MariaDB-1:10.3.16+maria~bionic mariadb.org binary distribution
+
+Copyright (c) 2000, 2018, Oracle, MariaDB Corporation Ab and others.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+MariaDB [(none)]> use users
+Reading table information for completion of table and column names
+You can turn off this feature to get a quicker startup with -A
+
+Database changed
+MariaDB [users]> insert into users (user, password) values ('test', 'test');
+Query OK, 1 row affected (0.005 sec)
+
+MariaDB [users]> exit
+Bye
+```
+
+Lets try and get a hello from our service:
+```
+$ curl http://localhost:5000/hello
+Unauthorized Access
+```
+
+Wow, our security is working!!! Let's try while supplying authentication details:
+```
+$ curl -u "test:test" http://localhost:5000/hello
+Hi - To test - From TestingDockerCompose
+```
+
+Now we get a response ... but perhaps the implementation of the security is not great?!?! 
 
 
-urlencode 'hello; ls -la /; cat /data/hello'
+## Container Life Cycle
+An interesting thing is that if we stop the containers started via the docker-compose, the container is stopped, of course.
+
+But if we restart the docker-compose setup again, the containers are reused. We can check this by trying to authenticate with the test user that we created manually.
+
+If we want to make a clean restart, we need to remove the stopped containers so that they will not be reused when restarting the docker-compose.
+
+Let's try it:
+```
+$ docker-compose up
+WARNING: The Docker Engine you're using is running in swarm mode.
+
+Compose does not use swarm mode to deploy services to multiple nodes in a swarm. All containers will be scheduled on the current node.
+
+To deploy your application across the swarm, use `docker stack deploy`.
+
+Starting 02-docker-compose_myservice_1 ... done
+Starting 02-docker-compose_db_1        ... done
+Attaching to 02-docker-compose_myservice_1, 02-docker-compose_db_1
+myservice_1  | TestingDockerCompose
+myservice_1  |  * Serving Flask app 'app'
+myservice_1  |  * Debug mode: off
+myservice_1  | WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+myservice_1  |  * Running on all addresses (0.0.0.0)
+myservice_1  |  * Running on http://127.0.0.1:5000
+myservice_1  |  * Running on http://172.29.0.3:5000
+myservice_1  | Press CTRL+C to quit
+db_1         | 2022-11-27 19:18:05 0 [Note] mysqld (mysqld 10.3.16-MariaDB-1:10.3.16+maria~bionic) starting as process 1 ...
+... many loglines ..
+
+
+$ docker-compose rm -f
+Going to remove 02-docker-compose_db_1, 02-docker-compose_myservice_1
+Removing 02-docker-compose_db_1        ... done
+Removing 02-docker-compose_myservice_1 ... done
+
+
+$ docker-compose up
+WARNING: The Docker Engine you're using is running in swarm mode.
+
+Compose does not use swarm mode to deploy services to multiple nodes in a swarm. All containers will be scheduled on the current node.
+
+To deploy your application across the swarm, use `docker stack deploy`.
+
+Creating 02-docker-compose_myservice_1 ... done
+Creating 02-docker-compose_db_1        ... done
+Attaching to 02-docker-compose_myservice_1, 02-docker-compose_db_1
+myservice_1  | TestingDockerCompose
+myservice_1  |  * Serving Flask app 'app'
+myservice_1  |  * Debug mode: off
+myservice_1  | WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+myservice_1  |  * Running on all addresses (0.0.0.0)
+myservice_1  |  * Running on http://127.0.0.1:5000
+myservice_1  |  * Running on http://172.29.0.2:5000
+myservice_1  | Press CTRL+C to quit
+db_1         | Initializing database
+db_1         | 
+
+```
+
+Notice the logmessages. "Starting" means that an existing container is reused. Then we explicitly removes the containers with the rm -f command. The following docker-compose up will initiate a creation of new containers.
+
+
+## A Notice on SQL
+What happends if you use this password:
+
+fake:fake' or 'test' = 'test

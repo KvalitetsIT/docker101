@@ -181,4 +181,7 @@ Happy Birthday - From RunningGreeter
 
 Our python application allows for configuration of different greetings by using volume mounts. 
 
-It is in fact also vulnerable to a serious issue of OS command injection attacks - can you see how?
+It is in fact also vulnerable to a serious issue - can you see how?
+
+
+Hint: urlencode 'hello; echo Shell Injections are nasty; cat /data/hello'
