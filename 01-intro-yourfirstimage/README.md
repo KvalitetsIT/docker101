@@ -159,7 +159,7 @@ $ curl http://localhost:5000/birthday
 <title>500 Internal Server Error</title>
 <h1>Internal Server Error</h1>
 <p>The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.</p>
-``
+```
 Notice how the greeter name has changed with our redefinition of the environment variable GREETER. If we try to access the birthday URL the application will give us an error. 
 
 We can also supply configuration on runtime by using volume mounts (mounting files into the filesystem of the running container):
