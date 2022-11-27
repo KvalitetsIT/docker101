@@ -4,4 +4,5 @@ This repository contains various resources in connection to the "Docker for Deve
 The repository is divided into folders to match the individual topics in the course. 
 Each folder will also contain documentation on how to use the examples and small tasks for you to try.
 
-[Intro to Docker and containers](01-intro)
+[Your first Image](01-intro-yourfirstimage)
+[Tool: Docker-compoes](02-docker-compose)
