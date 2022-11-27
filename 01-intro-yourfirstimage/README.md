@@ -5,6 +5,7 @@
 Let's create a simple Docker image.
 
 We will create a Dockerfile to define our image. As a base image we use python:3.11.0-alpine3.15
+
 Alpine is a lightweight Linux distribution and we will create a simple python application to learn about Docker images and containers.
 
 ```
