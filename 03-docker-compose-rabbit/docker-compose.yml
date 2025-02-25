@@ -1,0 +1,30 @@
+version: "3.9"  # Vælg den version, der passer bedst til dig
+
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2019-latest  # Eller vælg en bestemt version
+    container_name: sqlserver_container
+    environment:
+      - ACCEPT_EULA=Y  # Accepter licensaftalen
+      - SA_PASSWORD=YourStrongPassword123!  # MEGET VIGTIGT: Skift dette til et stærkt kodeord
+    ports:
+      - "1433:1433" # Map port 1433 (SQL Server)
+    volumes:
+      - sqlserver_data:/var/opt/mssql  # Persistent data volume
+    restart: always
+
+  rabbitmq:
+    image: rabbitmq:3.9-management  # Inkluder management plugin for nem administration
+    container_name: rabbitmq_container
+    ports:
+      - "5672:5672" # AMQP port
+      - "15672:15672" # Management UI port, login guest/guest
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq  # Persistent data volume
+    depends_on:
+      - sqlserver # Start RabbitMQ efter SQL Server (valgfrit, men kan være nyttigt)
+    restart: always
+
+volumes:
+  sqlserver_data: # Navngivet volume for SQL Server data
+  rabbitmq_data: # Navngivet volume for RabbitMQ data
